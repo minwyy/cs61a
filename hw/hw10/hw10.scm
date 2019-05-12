@@ -1,0 +1,36 @@
+(define (accumulate combiner start n term)
+   (if (= n 0) start (combiner (term n) (accumulate combiner start (- n 1) term)))
+)
+
+(define (accumulate-tail combiner start n term)
+   (define (helper combiner start n term sum) 
+   		(if (= n 0) (combiner start sum)
+   			(helper combiner start (- n 1) term (combiner sum (term n)))
+   			))
+   	(helper combiner start (- n 1) term (term n))
+)
+
+(define (partial-sums stream)
+  (define (helper sum s)
+  		(if (null? s) ()
+  			(cons-stream (+ sum (car s)) (helper (+ sum (car s)) (cdr-stream s)))
+  			)
+  )
+  (helper 0 stream)
+)
+
+(define (rle s)
+  (define (helper prev run stream)
+   	(cond 
+   		((null? stream) (cons-stream (list prev run) nil))
+   		((= prev (car stream)) (helper prev (+ run 1) (cdr-stream stream)))
+   		((not (= prev (car stream))) (cons-stream (list prev run) (helper (car stream) 0 stream)))
+   	)
+   	)
+  	(if (null? s) nil (helper (car s) 0 s))
+)
+
+
+; (define (accumulate combiner start n term)
+  ; (if (= n 0) (term (+ n start)) (combiner (term start) (accumulate combiner (+ start 1) (- n 1) term)))
+; )
